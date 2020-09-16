@@ -155,7 +155,7 @@
             tbody.append(row("Credit", head['credit']));
             var max_tx = parseInt(head['credit']) * 20;
             tbody.append(row('Daily Transactions Limit', head['counter'] + ' / ' + max_tx));
-            tbody.append(row('Forks / Restricted', data['forks'] + ' / ' + data['limited']));
+            tbody.append(row('Forks / Restricted', data['forks'] + ' / ' + data['restricted']));
             tbody.append(row('Latest Block', toLink(data['head'])));
             if ('representative' in head)
             {
