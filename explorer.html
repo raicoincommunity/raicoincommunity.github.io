@@ -185,6 +185,7 @@
             tbody.append(row('Account', toLink(block['account'])));
             tbody.append(row('Height', block['height']));
             tbody.append(row('Opcode', block['opcode']));
+            tbody.append(row('Amount', $.formatBalance(data['amount'])));
             tbody.append(row('Credit', block['credit']));
             tbody.append(row('Counter', block['counter']));
             tbody.append(row('Balance', $.formatBalance(block['balance'])));
