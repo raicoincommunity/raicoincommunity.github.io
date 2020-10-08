@@ -27,8 +27,11 @@
       }
     };
 
-    $.formatBalance = function(data){ 
+    $.formatInt = function(data){ 
       return data.replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"); 
     };
+
+    $.formatBalance = $.formatInt;
+    
   })(jQuery); // End of use strict
   

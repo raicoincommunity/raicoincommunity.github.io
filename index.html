@@ -84,8 +84,10 @@
                 <div class="divider-custom-line"></div>
             </div>
             <div class="row">
-                <h4 class="col-sm-6" id="tps">CURRENT/MAX TPS:&nbsp;loading...</h3>
-                <h4 class="col-sm-6" id="supply">Circulating Supply: loading...</h3>
+                <h4 class="col-sm-6" id="tps">CURRENT/MAX TPS:&nbsp;loading...</h4>
+                <h4 class="col-sm-6" id="supply">CIRCULATING SUPPLY:&nbsp;loading...</h4>
+                <h4 class="col-sm-6" id="peers">PEERS:&nbsp;loading...</h4>
+                <h4 class="col-sm-6" id="blocks">BLOCKS:&nbsp;loading...</h4>
             </div>
             <form class="my-5" action="explorer.html" method="GET">
                 <div class="form-row">
@@ -259,11 +261,55 @@
                 });
             };
 
+            var parsePeers = function(data){
+                var success = 'count' in data;
+                if (!success)
+                {
+                    return;
+                }
+                $('#peers').text('PEERS: ' + $.formatInt(data['count']));
+            };
+
+            var getPeers = function(){
+                $.ajax({
+                    type: "POST",
+                    url: api,
+                    data: JSON.stringify({ 'action': 'peer_count'}),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: parsePeers
+                });
+            };
+
+            var parseBlocks = function(data){
+                var success = 'count' in data;
+                if (!success)
+                {
+                    return;
+                }
+                $('#blocks').text('BLOCKS: ' + $.formatInt(data['count']));
+            };
+
+            var getBlocks = function(){
+                $.ajax({
+                    type: "POST",
+                    url: api,
+                    data: JSON.stringify({ 'action': 'block_count'}),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: parseBlocks
+                });
+            };
+
             getTps();
             getSupply();
+            getPeers();
+            getBlocks();
 
-            setInterval(getTps, 5000);
+            setInterval(getTps, 3000);
             setInterval(getSupply, 5000);
+            setInterval(getPeers, 10000);
+            setInterval(getBlocks, 3000);
         });
 
     </script>
