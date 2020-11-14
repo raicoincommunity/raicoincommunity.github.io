@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>Online Statistics and Expected Daily Airdrop - Raicoin</title>
+    <!-- Favicon-->
+    <link rel="icon" type="image/png" href="assets/img/favicon.png" />
+    <!-- Font Awesome icons (free version)-->
+    <script src="js/fontawesome/v5.13.0/all.js"></script>
+    <!-- Google fonts-->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet"
+        type="text/css" />
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="css/styles.css" rel="stylesheet" />
+</head>
+
+<body id="page-top">
+    <!-- Navigation-->
+    <nav class="navbar navbar-expand-lg bg-secondary text-uppercase fixed-top" id="mainNav">
+        <div class="container">
+            <a class="navbar-brand js-scroll-trigger" href="./index.html">Raicoin</a>
+            <button
+                class="navbar-toggler navbar-toggler-right text-uppercase font-weight-bold bg-primary text-white rounded"
+                type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive"
+                aria-expanded="false" aria-label="Toggle navigation">
+                Menu
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+              <ul class="navbar-nav ml-auto">
+                <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger"
+                        href="./index.html#explorer">Explorer</a></li>
+                <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger"
+                        href="./index.html#resource">Resource</a></li>
+                <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger"
+                        href="./index.html#wallet">Wallet</a></li>
+                <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="https://atomars.com/trading/RAIUSDT">Exchange</a></li>
+              <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger"
+                href="./airdrop.html">Airdrop</a></li>
+                <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger"
+                  href="./toplist.html">Toplist</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- Airdrop Section-->
+    <section class="page-section">
+        <div class="text-center mt-5" id="load">
+            <div class="spinner-border" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+
+        <div class="text-center mt-5">
+          <p id="error" class="d-none"></p>
+        </div>
+    
+       <div class="container mt-3 d-none" id="toplist">
+            <table class="table table-striped" >
+              <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Account</th>
+                    <th scope="col">Balance</th>
+                    <th scope="col">% of Supply</th>
+                </tr>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Footer-->
+    <footer class="footer text-center">
+        <div class="container">
+            <div class="row">
+                <!-- Footer Social Icons-->
+                <div class="col-lg-6 mb-5 mb-lg-0">
+                    <h4 class="text-uppercase mb-4">Follow us</h4>
+                    <a class="btn btn-outline-light btn-social mx-1" href="https://t.me/RaicoinOfficial"><i
+                      class="fab fa-fw fa-telegram-plane"></i></a>
+                    <a class="btn btn-outline-light btn-social mx-1" href="https://twitter.com/RaicoinC"><i
+                        class="fab fa-fw fa-twitter"></i></a>
+                <a class="btn btn-outline-light btn-social mx-1" href="https://github.com/raicoincommunity"><i class="fab fa-fw fa-github"></i></a>
+                    <a class="btn btn-outline-light btn-social mx-1" href="https://bitcointalk.org/index.php?topic=5188094.0"><i class="fab fa-fw fa-dribbble"></i></a>
+          </div>
+                <!-- Footer About Text-->
+                <div class="col-lg-6">
+                    <h4 class="text-uppercase mb-4">About</h4>
+                    <p class="lead mb-0">
+                        Raicoin is a  MIT licensed opensource project.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- Copyright Section-->
+    <div class="copyright py-4 text-center text-white">
+        <div class="container"><small>Copyright © Raicoin Community 2020</small></div>
+    </div>
+    <!-- Scroll to Top Button (Only visible on small and extra-small screen sizes)-->
+    <div class="scroll-to-top d-lg-none position-fixed">
+        <a class="js-scroll-trigger d-block text-center text-white rounded" href="#page-top"><i
+                class="fa fa-chevron-up"></i></a>
+    </div>
+
+    <!-- Bootstrap core JS-->
+    <script src="js/jquery/3.5.1/jquery.min.js"></script>
+    <script src="js/bootstrap/4.5.0/bootstrap.bundle.min.js"></script>
+    <!-- Third party plugin JS-->
+    <script src="js/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+    <!-- Core theme JS-->
+    <script src="js/scripts.js"></script>
+    <script src="js/util.js"></script>
+    <script src="js/search.js"></script>
+    <script>
+        $(function(){
+          var api = "https://rpc.raicoin.org";
+
+          var toLink = function(value){
+            return '<a href="./explorer.html?search=' + value + '">' + value + '</a>';
+          };
+
+          var toPercent = function(balance, supply){
+            return (100 * balance / supply).toFixed(4);
+          };
+
+          var row = function(index, item, supply){
+            return '<tr>' +
+              '<td>' + index + '</td>' +
+              '<td style="font-family: Consolas">' + toLink(item['account']) + '</td>' +
+              '<td>' + $.formatBalance(item['amount_in_rai'].split(' ')[0].split('.')[0]) + ' RAI</td>' +
+              '<td>' + toPercent(item['amount'], supply) + '%</td>' +
+              '</tr>';
+          };
+
+          var parseResult = function(data){
+            $('#load').hide();
+            if ('error' in data)
+            {
+              $('#error').text(data['error']).removeClass("d-none");
+              return;
+            }
+
+            if (data['count'] == 0)
+            {
+              $('#error').text('The server returns 0 records').removeClass("d-none");
+              return;
+            }
+
+            var tbody = $('#toplist tbody');
+            for (var i = 0; i < data['list'].length; ++i)
+            {
+              tbody.append(row(i + 1, data['list'][i], data['supply']));
+            }
+
+            $('#load').hide();
+            $('#toplist').removeClass('d-none');
+          };
+
+          var errorProcess = function(errMsg){
+            $('#load').hide();
+            $('#error').text("Error: failed to connect api server").removeClass("d-none");
+          };
+
+          $.ajax({
+              type: "POST",
+              url: api,
+              data: JSON.stringify({ 'action': 'richlist', 'count': 100 }),
+              contentType: "application/json; charset=utf-8",
+              dataType: "json",
+              success: parseResult,
+              failure: errorProcess
+            });
+      }); 
+    </script>
+</body>
+
+</html>
