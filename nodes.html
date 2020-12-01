@@ -134,6 +134,7 @@
           var stats_yesterday = null;
           var stats_before_yesterday = null;
           var invited_reps = null;
+          var online_reps = null;
           var api = "https://airdrop.raicoin.org/stat/cumulative/";
 
           var mergeData = function(){
@@ -175,8 +176,16 @@
             return result;
           };
 
-          var toLink = function(value){
-            return '<a href="./explorer.html?search=' + value + '">' + value + '</a>';
+          var toLink = function(item){
+            var value = item['rep'];
+            if (repOnline(item))
+            {
+              return '<a href="./explorer.html?search=' + value + '">' + value + '</a>';
+            }
+            else
+            {
+              return '<a href="./explorer.html?search=' + value + '" class="text-muted">' + value + '</a>';
+            }
           };
 
           var toDays = function(value){
@@ -208,10 +217,27 @@
             return (item['yesterday'] * daily_airdrop / counted_total).toFixed() + ' RAI';
           };
 
+          var repOnline = function(item)
+          {
+            return online_reps.indexOf(item['rep']) > -1;
+          };
+
+          var toIndex = function(index, item)
+          {
+            if (repOnline(item))
+            {
+              return '' + index;
+            }
+            else
+            {
+              return '*' + index;
+            }
+          }
+
           var row = function(index, item){
             return '<tr>' +
-              '<td>' + index + '</td>' +
-              '<td style="font-family: Consolas">' + toLink(item['rep']) + '</td>' +
+              '<td>' + toIndex(index, item) + '</td>' +
+              '<td style="font-family: Consolas">' + toLink(item) + '</td>' +
               '<td>' + toDays(item['yesterday']) + '</td>' +
               '<td>' + toDays(item['today']) + '</td>' +
               '<td>' + toQualified(item) + '</td>' +
@@ -252,7 +278,7 @@
 
           var processSuccess = function(){
             if (error) return;
-            if (stats_today === null || stats_yesterday === null || stats_before_yesterday === null || invited_reps === null)
+            if (stats_today === null || stats_yesterday === null || stats_before_yesterday === null || invited_reps === null || online_reps === null)
             {
                 return;
             }
@@ -317,6 +343,17 @@
             processSuccess();
           };
 
+          var parseOnlineReps = function(data) {
+            var onlines = [];
+            var reps = data['peers'];
+            for (var i = 0; i < reps.length; ++i)
+            {
+                onlines.push(reps[i]['account']);
+            }
+            online_reps = onlines;
+            processSuccess();
+          }
+
           var errorProcess = function(errMsg){
             $('#load').hide();
             $('#error').text("Error: failed to connect api server").removeClass("d-none");
@@ -357,6 +394,18 @@
               success: parseInvitedReps,
               failure: errorProcess
             });
+
+            $.ajax({
+              type: "POST",
+              url: "https://rpc.raicoin.org/",
+              data: JSON.stringify({ 'action': 'peers'}),
+              contentType: "application/json; charset=utf-8",
+              dataType: "json",
+              success: parseOnlineReps,
+              failure: errorProcess
+            });
+
+
       }); 
     </script>
 </body>
