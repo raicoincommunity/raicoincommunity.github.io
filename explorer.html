@@ -85,7 +85,32 @@
               <tbody>
               </tbody>
             </table>
-        </div>   
+        </div>  
+        
+        <div class="container d-none" id="delegator-list">
+          <h2>Top Delegators:</h2>
+          <div class="text-center" id="load-delegator-list">
+            <div class="spinner-border" role="status">
+                <span class="sr-only">Loading delegator list...</span>
+            </div>
+          </div>
+          <table class="table table-striped d-none">
+            <thead>
+              <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Account</th>
+                  <th scope="col">Type</th>
+                  <th scope="col">Weight</th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+          <div class="text-center">
+            <p id="error-delegator-list" class="d-none"></p>            
+          </div>
+        </div>
+      
     </section>
 
     <!-- Footer-->
@@ -144,6 +169,53 @@
             return '<a href="./explorer.html?search=' + value + '">' + value + '</a>';
           };
 
+          var rowDelegator = function(data, id) {
+            return '<tr>' +
+              '<td>' + id + '</td>' +
+              '<td style="word-break:break-all; word-wrap:break-all;">' + toLink(data['account']) + '</td>' +
+              '<td>' + data['type'] + '</td>' +
+              '<td>' + $.formatBalance(data['weight_in_rai'].split(' ')[0].split('.')[0]) + ' RAI' + '</td>' +
+              '</tr>';
+          }
+
+          var parseDelegatorList = function(data) {
+            $('#load-delegator-list').hide();
+            if ('error' in data)
+            {
+              $('#error-delegator-list').text(data['error']).removeClass("d-none");
+              return;
+            }
+
+            if (parseInt(data['count']) === 0) {
+              $('#error-delegator-list').text('No delegators yet').removeClass("d-none");
+              return
+            }
+
+            $('#delegator-list table').removeClass("d-none");
+            var tbody = $('#delegator-list tbody');
+            for (var i = 0; i < data['list'].length; ++i) {
+              tbody.append(rowDelegator(data['list'][i], i + 1));
+            }
+            console.log($('#delegator-list table'));
+          }
+
+          var errorProcessDelegatorList = function() {
+            $('#load-delegator-list').hide();
+            $('#error-delegator-list').text("Error: failed to connect api server").removeClass("d-none");
+          }
+
+          var requestDelegators = function(account) {
+            $.ajax({
+              type: "POST",
+              url: api,
+              data: JSON.stringify({ action: 'delegator_list', representative: account, count: '100' }),
+              contentType: "application/json; charset=utf-8",
+              dataType: "json",
+              success: parseDelegatorList,
+              failure: errorProcessDelegatorList
+            });
+          }
+
           var parseAccountInfo = function(data){
             $('#load').hide();
             if ('error' in data)
@@ -170,6 +242,11 @@
             }
 
             $('#account-info').removeClass('d-none');
+
+            if (data['type'] === 'representative') {
+              $('#delegator-list').removeClass('d-none');
+              requestDelegators(data['account']);
+            }
           };
 
           var parseBlockInfo = function(data){
