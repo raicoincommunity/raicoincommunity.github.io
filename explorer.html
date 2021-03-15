@@ -88,13 +88,18 @@
         </div>  
         
         <div class="container d-none" id="delegator-list">
-          <h2>Top Delegators:</h2>
+          <h2>
+            <span id="toggle-delegators">
+              <i class="fas fa-minus-circle fa-xs"></i>
+            </span>
+            Top Delegators:
+          </h2>
           <div class="text-center" id="load-delegator-list">
             <div class="spinner-border" role="status">
                 <span class="sr-only">Loading delegator list...</span>
             </div>
           </div>
-          <table class="table table-striped d-none">
+          <table class="table table-striped d-none" id="table-delegators">
             <thead>
               <tr>
                   <th scope="col">#</th>
@@ -110,6 +115,36 @@
             <p id="error-delegator-list" class="d-none"></p>            
           </div>
         </div>
+
+        <div class="container d-none" id="rewardables">
+          <h2>
+            <span id="toggle-rewardables">
+              <i class="fas fa-minus-circle fa-xs"></i>
+            </span>
+            Pending Rewardables:
+          </h2>
+          <div class="text-center" id="load-rewardables">
+            <div class="spinner-border" role="status">
+                <span class="sr-only">Loading pending rewardables...</span>
+            </div>
+          </div>
+          <table class="table table-striped d-none" id="table-rewardables">
+            <thead>
+              <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Source</th>
+                  <th scope="col">Amount</th>
+                  <th scope="col">Release Time</th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+          <div class="text-center">
+            <p id="error-rewardables" class="d-none"></p>            
+          </div>
+        </div>
+
       
     </section>
 
@@ -158,6 +193,30 @@
     <script src="js/search.js"></script>
     <script>
         $(function(){
+
+          var hasDelegators = false;
+          $("#toggle-delegators").click(function(){
+            if (!hasDelegators) return;
+            $(this).children().toggleClass("fa-minus-circle fa-plus-circle");
+            $("#table-delegators").toggleClass("d-none");
+          });
+
+          var hasRewardables = false;
+          $("#toggle-rewardables").click(function(){
+            if (!hasRewardables) return;
+            $(this).children().toggleClass("fa-minus-circle fa-plus-circle");
+            $("#table-rewardables").toggleClass("d-none");
+          });
+
+          var toDate = function(timestamp) {
+            timestamp = parseInt(timestamp) * 1000;
+            var offsetMs = (new Date()).getTimezoneOffset() * 60 * 1000;
+            timestamp -= offsetMs;
+            var dateLocal = new Date(timestamp);
+            var iso = dateLocal.toISOString();
+            return iso.slice(0, 19).replace("T", " ");
+          }
+
           var row = function(key, value){
             return '<tr>' +
               '<td>' + key + '</td>' +
@@ -175,6 +234,16 @@
               '<td style="word-break:break-all; word-wrap:break-all;">' + toLink(data['account']) + '</td>' +
               '<td>' + data['type'] + '</td>' +
               '<td>' + $.formatBalance(data['weight_in_rai'].split(' ')[0].split('.')[0]) + ' RAI' + '</td>' +
+              '</tr>';
+          }
+
+
+          var rowRewardable = function(data, id) {
+            return '<tr>' +
+              '<td>' + id + '</td>' +
+              '<td style="word-break:break-all; word-wrap:break-all;">' + toLink(data['hash']) + '</td>' +
+              '<td>' + data['amount_in_rai'] + '</td>' +
+              '<td>' + toDate(data['valid_timestamp']) + '</td>' +
               '</tr>';
           }
 
@@ -204,6 +273,7 @@
             for (var i = 0; i < data['list'].length; ++i) {
               tbody.append(rowDelegator(data['list'][i], i + 1));
             }
+            hasDelegators = true;
           }
 
           var errorProcessDelegatorList = function() {
@@ -225,6 +295,53 @@
             });
           }
 
+          var parseRewardables = function(data) {
+            $('#load-rewardables').hide();
+
+            if ('error' in data) {
+              if (!unknownAccountType) {
+                $('#error-rewardables').text(data['error']).removeClass("d-none");
+              }
+              return;
+            }
+
+            if (!data['rewardables']) {
+              if (!unknownAccountType) {
+                $('#error-rewardables').text('No pending rewardables yet').removeClass("d-none");
+              }
+              return;
+            }
+
+            if (unknownAccountType) {
+              $('#rewardables').removeClass("d-none");
+            }
+
+            $('#rewardables table').removeClass("d-none");
+            var tbody = $('#rewardables tbody');
+            for (var i = 0; i < data['rewardables'].length; ++i) {
+              tbody.append(rowRewardable(data['rewardables'][i], i + 1));
+            }
+            hasRewardables = true;
+          }
+
+          var errorProcessRewardables = function() {
+            if (unknownAccountType) return;
+            $('#load-rewardables').hide();
+            $('#error-rewardables').text("Error: failed to connect api server").removeClass("d-none");
+          }
+
+          var requestRewardables = function(account) {
+            $.ajax({
+              type: "POST",
+              url: api,
+              data: JSON.stringify({ action: 'rewardables', account: account, count: '100' }),
+              contentType: "application/json; charset=utf-8",
+              dataType: "json",
+              success: parseRewardables,
+              failure: errorProcessRewardables
+            });
+          }
+
           var parseAccountInfo = function(data){
             $('#load').hide();
             if ('error' in data)
@@ -234,6 +351,7 @@
                 error = 'The account has no transactions yet';
                 unknownAccountType = true;
                 requestDelegators(search);
+                requestRewardables(search);
               }
               $('#error').text(error).removeClass("d-none");
               return;
@@ -261,6 +379,8 @@
             if (data['type'] === 'representative') {
               $('#delegator-list').removeClass('d-none');
               requestDelegators(data['account']);
+              $('#rewardables').removeClass('d-none');
+              requestRewardables(data['account']);
             }
           };
 
@@ -288,7 +408,7 @@
             tbody.append(row('Credit', block['credit']));
             tbody.append(row('Counter', block['counter']));
             tbody.append(row('Balance', $.formatBalance(block['balance'])));
-            tbody.append(row('Timestamp', (new Date(parseInt(block['timestamp']) * 1000)).toUTCString()));
+            tbody.append(row('Timestamp', toDate(block['timestamp'])));
             if ('representative' in block)
             {
               tbody.append(row('Representative', toLink(block['representative'])));
