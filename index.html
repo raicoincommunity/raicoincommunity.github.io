@@ -97,9 +97,9 @@
                 <div class="divider-custom-line"></div>
             </div>
             <div class="row">
-                <h4 class="col-sm-6" id="tps">CURRENT/MAX TPS:&nbsp;loading...</h4>
+                <h4 class="col-sm-6" id="tps">CURRENT/PEAK TPS:&nbsp;loading...</h4>
                 <h4 class="col-sm-6" id="supply">CIRCULATING SUPPLY:&nbsp;loading...</h4>
-                <h4 class="col-sm-6" id="peers">PEERS:&nbsp;loading...</h4>
+                <h4 class="col-sm-6" id="peers">ONLINE NODES:&nbsp;loading...</h4>
                 <h4 class="col-sm-6" id="blocks">BLOCKS:&nbsp;loading...</h4>
             </div>
             <form class="my-5" action="explorer.html" method="GET">
@@ -241,7 +241,7 @@
     </footer>
     <!-- Copyright Section-->
     <div class="copyright py-4 text-center text-white">
-        <div class="container"><small>Copyright © Raicoin Community 2020</small></div>
+        <div class="container"><small>Copyright © Raicoin Community 2021</small></div>
     </div>
     <!-- Scroll to Top Button (Only visible on small and extra-small screen sizes)-->
     <div class="scroll-to-top d-lg-none position-fixed">
@@ -268,7 +268,7 @@
                 {
                     return;
                 }
-                $('#tps').text('CURRENT/MAX TPS: ' + data['now'] + '/' + data['max']);
+                $('#tps').text('CURRENT/PEAK TPS: ' + data['now'] + '/' + data['max']);
             };
 
             var getTps = function(){
@@ -308,7 +308,7 @@
                 {
                     return;
                 }
-                $('#peers').text('PEERS: ' + $.formatInt(data['count']));
+                $('#peers').text('ONLINE NODES: ' + $.formatInt(data['count']));
             };
 
             var getPeers = function(){
