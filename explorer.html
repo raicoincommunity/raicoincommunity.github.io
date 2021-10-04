@@ -233,7 +233,7 @@
               '<td>' + id + '</td>' +
               '<td style="word-break:break-all; word-wrap:break-all;">' + toLink(data['account']) + '</td>' +
               '<td>' + data['type'] + '</td>' +
-              '<td>' + $.formatBalance(data['weight_in_rai'].split(' ')[0].split('.')[0]) + ' RAI' + '</td>' +
+              '<td>' + $.formatInt(data['weight_in_rai'].split(' ')[0].split('.')[0]) + ' RAI' + '</td>' +
               '</tr>';
           }
 
