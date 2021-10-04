@@ -31,7 +31,24 @@
       return data.replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"); 
     };
 
-    $.formatBalance = $.formatInt;
+    $.formatSupply = $.formatInt;
+    $.formatBalance = function(data){
+      while (data.length < 10)
+      {
+        data = '0' + data;
+      }
+      data = $.formatInt(data.substring(0, data.length - 9))
+           + '.' + data.substring(data.length - 9);
+      while (data[data.length - 1] == '0')
+      {
+        data = data.substring(0, data.length - 1);
+      }
+      if (data[data.length - 1] == '.')
+      {
+        data = data.substring(0, data.length - 1);
+      }
+      return data + ' RAI';
+    };
     
   })(jQuery); // End of use strict
   

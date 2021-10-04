@@ -136,7 +136,7 @@
             return '<tr>' +
               '<td>' + index + '</td>' +
               '<td style="font-family: Consolas">' + toLink(item['account']) + '</td>' +
-              '<td>' + $.formatBalance(item['amount_in_rai'].split(' ')[0].split('.')[0]) + ' RAI</td>' +
+              '<td>' + $.formatInt(item['amount_in_rai'].split(' ')[0].split('.')[0]) + ' RAI</td>' +
               '<td>' + toPercent(item['amount'], supply) + '%</td>' +
               '</tr>';
           };
