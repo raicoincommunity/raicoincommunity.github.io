@@ -9,7 +9,7 @@
     };
 
     $.validateBlockHash = function(hash) {
-      return /^[A-F0-9]{64}$/.test(hash);
+      return /^[a-zA-F0-9]{64}$/.test(hash);
     };
 
     $.getUrlParameter = function(sParam) {
