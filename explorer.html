@@ -400,7 +400,7 @@
             var hash = $.getUrlParameter('search');
             var block = data['block'];
             var tbody = $('#block-info tbody');
-            tbody.append(row('Hash', hash));
+            tbody.append(row('Hash', hash.toUpperCase()));
             tbody.append(row('Account', toLink(block['account'])));
             tbody.append(row('Height', block['height']));
             tbody.append(row('Opcode', block['opcode']));
